@@ -269,6 +269,18 @@ gh pr create
 
 제목도 Conventional Commits 접두사로 시작한다 (squash merge 시 `(#21)` 자동 부착).
 
+### ★ 분량 — 짧게 쓴다
+
+**PR 본문은 한 화면(약 40줄)을 넘기지 않는다.** 6개 섹션 구조는 유지하되 각 섹션은 1~4줄이다.
+
+- **변경 파일 목록·디렉터리 트리·표를 본문에 넣지 않는다.** diff 가 이미 보여 준다.
+- 코드 블록을 붙이지 않는다. 필요하면 `파일:줄` 로 가리킨다.
+- 불릿은 섹션당 3개 이하. 나머지는 문장으로.
+- 길어야만 하는 근거(벤치마크 수치, 긴 로그)는 `<details>` 로 접는다.
+
+남길 것은 **diff 에 안 보이는 것**뿐이다 — 왜 이렇게 했는지, 무엇을 검증했는지, 무엇이 미검증인지.
+리뷰어는 "무엇이 바뀌었나"를 코드에서 읽는다. 본문에 그걸 복사하면 **읽히지 않는 PR**이 된다.
+
 ```markdown
 feat(booking): 예약 취소 및 24시간 패널티 부과
 
@@ -280,25 +292,20 @@ feat(booking): 예약 취소 및 24시간 패널티 부과
 보상 근거가 없어 정산 문의가 반복됐다.
 
 ## 변경사항
-- domain: `Booking.cancel(reason, now)` — 상태 전이 + 패널티 발생 판단
-- domain: `BookingCancelled` 이벤트 추가
-- application: `CancelBookingUseCase`, `BookingFacade.cancel()` (트랜잭션 경계)
-- presentation: `DELETE /bookings/:id`
-- frontend: `features/cancel-booking` 슬라이스 신규
+패널티 판단을 `Booking.cancel()` 에 두고, 패널티 적립은 다른 애그리거트라
+`BookingCancelled` 이벤트로 분리했다. 프론트는 `features/cancel-booking` 신규.
 
 ## 검증
-- 도메인 6건 / UseCase 3건 / 통합 3건 통과
-- `depcruise` 위반 0건, `steiger` 위반 0건
-- 롤백 검증: 패널티 부과 실패 시 예약 상태가 CONFIRMED 로 유지되는지 DB 직접 조회로 확인
-- 아키텍처 리뷰: `docs/code-review/2026-09-04-booking.md` (PASS)
+도메인 6 / UseCase 3 / 통합 3건 통과. depcruise·steiger 위반 0건.
+패널티 적립 실패 시 예약이 CONFIRMED 로 남는지 DB 직접 조회로 확인했다.
+아키텍처 리뷰 PASS — `docs/code-review/2026-09-04-booking.md`
 
 ## 영향 범위 · 롤백
-- 마이그레이션: `1725...-add-penalty.ts` — `down()` 으로 롤백 가능
-- 프론트 `entities/booking` 응답 타입에 `cancelledAt` 추가 (하위 호환)
+마이그레이션 `1725...-add-penalty.ts` 는 `down()` 으로 롤백된다.
+응답에 `cancelledAt` 이 추가되지만 하위 호환이다.
 
 ## 리뷰 포인트
-- 패널티를 이벤트로 분리한 판단 — 동기 처리 대비 트레이드오프가 적절한지
-- 24시간 기준을 도메인 상수로 뒀는데, 정책 테이블로 빼야 할 시점인지
+패널티를 이벤트로 분리한 판단 — 동기 처리 대비 트레이드오프가 적절한지.
 ```
 
 `.github/pull_request_template.md` 가 있으면 그 구조를 우선하되 **"배경 / 원인"은 반드시 채운다.**
