@@ -1,0 +1,49 @@
+# dependencies
+node_modules/
+.pnp/
+.pnp.js
+.yarn/
+
+# build output
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+*.pem
+
+# test / coverage
+coverage/
+.nyc_output/
+htmlcov/
+.coverage
+
+# editor / os
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# claude code local overrides
+.claude/settings.local.json
