@@ -3,8 +3,8 @@
 `.claude/` 체계를 **실제로 어떤 순서로 쓰는지**를 다룬다. 규칙의 내용은 각 문서에, 규칙을 쓰는
 순서는 여기에 있다.
 
-커밋 메시지·PR 형식은 사용자 전역 `~/.claude/CLAUDE.md` 의 Conventional Commits 규칙을 따른다.
-이 문서는 **그 규칙을 어느 시점에 적용하는지**만 정한다.
+커밋 메시지와 PR 본문 형식은 이 문서의 **W6 · W8** 에 정의되어 있다. 저장소 밖의 개인 설정에
+의존하지 않으므로, `.claude/` 를 그대로 복사하면 누구나 같은 규칙으로 일할 수 있다.
 
 ---
 
@@ -316,16 +316,13 @@ feat(booking): 예약 취소 및 24시간 패널티 부과
 - CI 의 `arch` / `fsd` / `test` 가 초록인지 확인
 - **squash merge**
 
-## W10. 마무리
+## W10. 머지 후 정리
 
-- `TASKS.md` 반영 (전역 규칙 형식 준수)
-
-```
-- [x] [booking] 예약 취소 API + 24시간 패널티 (2026-09-04)
-- [ ] [booking] 패널티 정책 테이블화
-```
-
-- 브랜치 정리: `git branch -d feat/booking-cancel`
+- 브랜치 삭제: `git branch -d feat/booking-cancel`
+- **리뷰에서 CONCERN/NIT 으로 남긴 것, 범위를 넘겨 미룬 것을 이슈로 남긴다.**
+  머릿속에만 두면 사라진다. `docs/code-review/` 리포트에서 그대로 옮겨 오면 된다.
+- `## 리뷰 포인트` 에서 나온 결론(예: "패널티 기준은 정책 테이블로 뺀다")은
+  `docs/domain/` 또는 규칙 문서에 반영한다. PR 코멘트에만 남으면 다음 사람이 못 본다.
 
 ---
 
@@ -356,5 +353,5 @@ feat(booking): 예약 취소 및 24시간 패널티 부과
   W7 문서 동기화         →  api-spec-updater / http-file-generator
   W8 PR                 →  요약·배경/원인·변경사항·검증·영향/롤백·리뷰포인트
   W9 반영 → 재리뷰 → squash merge
-  W10 TASKS.md
+  W10 브랜치 정리 · 남긴 것 이슈화
 ```

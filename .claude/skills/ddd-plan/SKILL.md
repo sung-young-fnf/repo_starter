@@ -169,8 +169,9 @@ npm run test && npx steiger ./src && npm run lint
 - 새 용어가 생겼으면 `docs/domain/<context>/ubiquitous-language.md` 갱신
 
 ### Step 6 — 마무리
-- 작업이 끝났으면 사용자에게 **`TASKS.md` 반영 여부를 묻는다** (전역 규칙).
-- 커밋은 사용자가 요청할 때만 한다.
+- 리뷰에서 CONCERN/NIT 으로 남긴 것, 범위를 넘겨 미룬 것을 **사용자에게 보고한다.**
+  머릿속에만 두면 사라진다.
+- 커밋·푸시·PR 은 사용자가 요청할 때만 한다. 형식은 `.claude/docs/01-WORKFLOW.md` W6 · W8.
 
 ---
 
