@@ -41,5 +41,6 @@ docs/code-review/     리뷰 리포트
 http/                 수동 테스트용 .http 파일
 ```
 
-> 커밋/PR 메시지 규칙은 사용자 전역 `~/.claude/CLAUDE.md` 의 Conventional Commits 규칙을 따른다.
-> `TASKS.md` 형식 규칙도 마찬가지다.
+> 커밋 메시지와 PR 본문 형식은 `.claude/docs/01-WORKFLOW.md` 의 W6 · W8 에 정의되어 있다.
+> Conventional Commits 접두사로 시작하고, 본문에는 diff 에 안 보이는 것(원인·판단 근거·검증 결과)을 남긴다.
+> 커밋·푸시·PR 은 사용자가 요청할 때만 생성한다.

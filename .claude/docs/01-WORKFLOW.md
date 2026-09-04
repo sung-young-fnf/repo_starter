@@ -3,8 +3,8 @@
 `.claude/` 체계를 **실제로 어떤 순서로 쓰는지**를 다룬다. 규칙의 내용은 각 문서에, 규칙을 쓰는
 순서는 여기에 있다.
 
-커밋 메시지·PR 형식은 사용자 전역 `~/.claude/CLAUDE.md` 의 Conventional Commits 규칙을 따른다.
-이 문서는 **그 규칙을 어느 시점에 적용하는지**만 정한다.
+커밋 메시지와 PR 본문 형식은 이 문서의 **W6 · W8** 에 정의되어 있다. 저장소 밖의 개인 설정에
+의존하지 않으므로, `.claude/` 를 그대로 복사하면 누구나 같은 규칙으로 일할 수 있다.
 
 ---
 
@@ -269,6 +269,18 @@ gh pr create
 
 제목도 Conventional Commits 접두사로 시작한다 (squash merge 시 `(#21)` 자동 부착).
 
+### ★ 분량 — 짧게 쓴다
+
+**PR 본문은 한 화면(약 40줄)을 넘기지 않는다.** 6개 섹션 구조는 유지하되 각 섹션은 1~4줄이다.
+
+- **변경 파일 목록·디렉터리 트리·표를 본문에 넣지 않는다.** diff 가 이미 보여 준다.
+- 코드 블록을 붙이지 않는다. 필요하면 `파일:줄` 로 가리킨다.
+- 불릿은 섹션당 3개 이하. 나머지는 문장으로.
+- 길어야만 하는 근거(벤치마크 수치, 긴 로그)는 `<details>` 로 접는다.
+
+남길 것은 **diff 에 안 보이는 것**뿐이다 — 왜 이렇게 했는지, 무엇을 검증했는지, 무엇이 미검증인지.
+리뷰어는 "무엇이 바뀌었나"를 코드에서 읽는다. 본문에 그걸 복사하면 **읽히지 않는 PR**이 된다.
+
 ```markdown
 feat(booking): 예약 취소 및 24시간 패널티 부과
 
@@ -280,25 +292,20 @@ feat(booking): 예약 취소 및 24시간 패널티 부과
 보상 근거가 없어 정산 문의가 반복됐다.
 
 ## 변경사항
-- domain: `Booking.cancel(reason, now)` — 상태 전이 + 패널티 발생 판단
-- domain: `BookingCancelled` 이벤트 추가
-- application: `CancelBookingUseCase`, `BookingFacade.cancel()` (트랜잭션 경계)
-- presentation: `DELETE /bookings/:id`
-- frontend: `features/cancel-booking` 슬라이스 신규
+패널티 판단을 `Booking.cancel()` 에 두고, 패널티 적립은 다른 애그리거트라
+`BookingCancelled` 이벤트로 분리했다. 프론트는 `features/cancel-booking` 신규.
 
 ## 검증
-- 도메인 6건 / UseCase 3건 / 통합 3건 통과
-- `depcruise` 위반 0건, `steiger` 위반 0건
-- 롤백 검증: 패널티 부과 실패 시 예약 상태가 CONFIRMED 로 유지되는지 DB 직접 조회로 확인
-- 아키텍처 리뷰: `docs/code-review/2026-09-04-booking.md` (PASS)
+도메인 6 / UseCase 3 / 통합 3건 통과. depcruise·steiger 위반 0건.
+패널티 적립 실패 시 예약이 CONFIRMED 로 남는지 DB 직접 조회로 확인했다.
+아키텍처 리뷰 PASS — `docs/code-review/2026-09-04-booking.md`
 
 ## 영향 범위 · 롤백
-- 마이그레이션: `1725...-add-penalty.ts` — `down()` 으로 롤백 가능
-- 프론트 `entities/booking` 응답 타입에 `cancelledAt` 추가 (하위 호환)
+마이그레이션 `1725...-add-penalty.ts` 는 `down()` 으로 롤백된다.
+응답에 `cancelledAt` 이 추가되지만 하위 호환이다.
 
 ## 리뷰 포인트
-- 패널티를 이벤트로 분리한 판단 — 동기 처리 대비 트레이드오프가 적절한지
-- 24시간 기준을 도메인 상수로 뒀는데, 정책 테이블로 빼야 할 시점인지
+패널티를 이벤트로 분리한 판단 — 동기 처리 대비 트레이드오프가 적절한지.
 ```
 
 `.github/pull_request_template.md` 가 있으면 그 구조를 우선하되 **"배경 / 원인"은 반드시 채운다.**
@@ -309,16 +316,13 @@ feat(booking): 예약 취소 및 24시간 패널티 부과
 - CI 의 `arch` / `fsd` / `test` 가 초록인지 확인
 - **squash merge**
 
-## W10. 마무리
+## W10. 머지 후 정리
 
-- `TASKS.md` 반영 (전역 규칙 형식 준수)
-
-```
-- [x] [booking] 예약 취소 API + 24시간 패널티 (2026-09-04)
-- [ ] [booking] 패널티 정책 테이블화
-```
-
-- 브랜치 정리: `git branch -d feat/booking-cancel`
+- 브랜치 삭제: `git branch -d feat/booking-cancel`
+- **리뷰에서 CONCERN/NIT 으로 남긴 것, 범위를 넘겨 미룬 것을 이슈로 남긴다.**
+  머릿속에만 두면 사라진다. `docs/code-review/` 리포트에서 그대로 옮겨 오면 된다.
+- `## 리뷰 포인트` 에서 나온 결론(예: "패널티 기준은 정책 테이블로 뺀다")은
+  `docs/domain/` 또는 규칙 문서에 반영한다. PR 코멘트에만 남으면 다음 사람이 못 본다.
 
 ---
 
@@ -349,5 +353,5 @@ feat(booking): 예약 취소 및 24시간 패널티 부과
   W7 문서 동기화         →  api-spec-updater / http-file-generator
   W8 PR                 →  요약·배경/원인·변경사항·검증·영향/롤백·리뷰포인트
   W9 반영 → 재리뷰 → squash merge
-  W10 TASKS.md
+  W10 브랜치 정리 · 남긴 것 이슈화
 ```

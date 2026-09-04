@@ -76,7 +76,7 @@
 │    ├─ api-spec-updater
 │    └─ http-file-generator
 │
-└─ 커밋 & PR  (커밋 규칙은 사용자 전역 CLAUDE.md 의 Conventional Commits 규칙을 따른다)
+└─ 커밋 & PR  (형식은 01-WORKFLOW.md W6 · W8)
 ```
 
 ## 이 체계가 지키려는 것
